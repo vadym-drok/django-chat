@@ -8,12 +8,12 @@
     <textarea id="chat-log" cols="100" rows="20"></textarea><br/>
     <input id="chat-message-input" type="text" size="100"/><br/>
     <input id="chat-message-submit" type="button" value="Send"/>
+    <input id="chat-message-anonymously" type="button" value="Send anonymously"/>
 
 {{ request.user.username|json_script:"user_username" }}
 
 <script>
     const user_username = JSON.parse(document.getElementById('user_username').textContent);
-
 
     var roomName = "{{ room_name|escapejs }}";
 
@@ -25,10 +25,9 @@
         var data = JSON.parse(e.data);
         var message = data['message'];
         var username = data['username'];
+        var now = new Date().toLocaleString();
 
-        var today_data = data['today_data'];
-
-        document.querySelector('#chat-log').value += (today_data + username + ': ' + message + '\n');
+        document.querySelector('#chat-log').value += (username + ', ' +now  + ': ' + message + '\n');
     };
 
     chatSocket.onclose = function(e) {
