@@ -5,52 +5,110 @@
     <title>Chat Room</title>
 </head>
 <body>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br/>
+    <div>
+        <textarea  readonly id="chat-log" cols="100" rows="20"></textarea><br/>
     <input id="chat-message-input" type="text" size="100"/><br/>
     <input id="chat-message-submit" type="button" value="Send"/>
     <input id="chat-message-anonymously" type="button" value="Send anonymously"/>
+    </div>
+    <div>
+        <form action="." method ='post' id='csrf_token_get'>{% csrf_token %}</form>
 
-{{ request.user.username|json_script:"user_username" }}
+        <input id="datetime-message" type="datetime-local" id="date" name="date"/>
+        <input id="chat-message-in_datetime" type="button" value="Send in date time"/>
+    </div>
+    
 
-<script>
-    const user_username = JSON.parse(document.getElementById('user_username').textContent);
+    {{ request.user.username|json_script:"user_username" }}
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
 
-    var roomName = "{{ room_name|escapejs }}";
+        const user_username = JSON.parse(document.getElementById('user_username').textContent);
 
-    var chatSocket = new WebSocket(
-        'ws://' + window.location.host +
-        '/ws/chat/' + roomName + '/');
+        var roomName = "{{ room_name|escapejs }}";
 
-    chatSocket.onmessage = function(e) {
-        var data = JSON.parse(e.data);
-        var message = data['message'];
-        var username = data['username'];
-        var now = new Date().toLocaleString();
+        var chatSocket = new WebSocket(
+            'ws://' + 
+            window.location.host +
+            '/ws/chat/' + 
+            roomName + 
+            '/'
+            );
 
-        document.querySelector('#chat-log').value += (username + ', ' +now  + ': ' + message + '\n');
-    };
+        chatSocket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            var message = data['message'];
+            var username = data['username'];
+            var now = new Date().toLocaleString();
 
-    chatSocket.onclose = function(e) {
-        console.error('Chat socket closed unexpectedly');
-    };
+            document.querySelector('#chat-log').value += (username + ', ' +now  + ': ' + message + '\n');
+        };
 
-    document.querySelector('#chat-message-input').focus();
-    document.querySelector('#chat-message-input').onkeyup = function(e) {
-        if (e.keyCode === 13) {  // enter, return
-            document.querySelector('#chat-message-submit').click();
-        }
-    };
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
 
-    document.querySelector('#chat-message-submit').onclick = function(e) {
-        var messageInputDom = document.querySelector('#chat-message-input');
-        var message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'message': message,
-            'username': user_username,
-        }));
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
 
-        messageInputDom.value = '';
-    };
-</script>
+        // Send message 
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            var messageInputDom = document.querySelector('#chat-message-input');
+            var message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'username': user_username,
+            }));
+
+            messageInputDom.value = '';
+        };
+
+        // Send message anonymously
+        document.querySelector('#chat-message-anonymously').onclick = function(e) {
+            var messageInputDom = document.querySelector('#chat-message-input');
+            var message = messageInputDom.value;
+            var user_username = ''
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'username': user_username,
+            }));
+
+            messageInputDom.value = '';
+        };
+
+        // Send message in date_time
+
+        document.querySelector('#chat-message-in_datetime').onclick = function(e) {
+            var messageInputDate = document.querySelector('#datetime-message');
+            var messageInputDom = document.querySelector('#chat-message-input');
+
+            var message = messageInputDom.value;
+            var datetime = messageInputDate.value;
+
+            var data = {};
+                data.message = message;
+                data.user_username = user_username;
+                data.datetime = datetime;
+                data.roomname = roomName;
+
+                var csrf_token = $('#csrf_token_get [name="csrfmiddlewaretoken"]').val();
+                data["csrfmiddlewaretoken"] = csrf_token;
+
+                var url = '/chat/create/'
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: data,
+                    });
+                
+                messageInputDom.value = '';
+                messageInputDate.value = '';
+            };
+    </script>
 </body>
 </html>

@@ -1,7 +1,7 @@
-from os import PRIO_USER
+from weakref import ProxyTypes
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
-import datetime
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -16,21 +16,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-    async def disconnect(self, close_code):
-        # Leave room group
-        pass
+    async def disconnect(self, code):
+        await self.channel_layer.discard(
+            self.room_group_name,
+            self.channel_name
+        )
 
     # Receive message from WebSocket
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         message = text_data_json['message']
         username = text_data_json['username']
+        print('receive')
 
-        # today = datetime.datetime.today().replace(microsecond=0)
-        # today_iso = today.isoformat()  # convert to iso-format
-        # today_data =  json.dumps(today_iso) # convert to json-format
-
-        
         # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -38,20 +36,18 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 'type': 'chat_message',
                 'message': message,
                 'username': username,
-                # 'today': today_data,
             }
         )
-        
 
     # Receive message from room group
     async def chat_message(self, event):
+        print('chat_message1')
         message = event['message']
         username = event['username']
-        # today_data = event['today']
+        print('chat_message')
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
             'username': username,
-            # 'today_data': today_data,
         }))

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import environ
 
+
 env = environ.Env()
 environ.Env.read_env()  # reading .env file
 
@@ -28,6 +29,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
+
 
 ALLOWED_HOSTS = []
 
@@ -45,7 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'main',
-
 ]
 
 # Channels
@@ -58,6 +59,15 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
+# Celery Configuration Options
+# CELERY_TIMEZONE = "Euro/Kyiv"
+# CELERY_TASK_TRACK_STARTED = True
+# CELERY_TASK_TIME_LIMIT = 30 * 60
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 
 MIDDLEWARE = [
@@ -126,7 +136,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+
+USE_TZ = True
+TIME_ZONE = env('TIME_ZONE')
+
 
 USE_I18N = True
 
