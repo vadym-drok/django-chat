@@ -1,0 +1,7 @@
+
+
+docker-compose run django
+docker-compose up
+
+docker exec -it django sh
+python manage.py migrate

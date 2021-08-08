@@ -45,9 +45,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
     'main',
+
 ]
+
 
 # Channels
 ASGI_APPLICATION = "chat.routing.application"
@@ -55,15 +56,15 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
+            "hosts": [("redis", 6379)],
         },
     },
 }
 
 
 # Celery Configuration Options
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
 
 
 MIDDLEWARE = [
@@ -100,10 +101,15 @@ WSGI_APPLICATION = 'chat.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('NAME_DB'),
+        'USER': env('USER_DB'),
+        'PASSWORD': env('PASSWORD_DB'),
+        'HOST': env('HOST_DB'),
+        'PORT': env('HOST_PORT'),
     }
 }
 
