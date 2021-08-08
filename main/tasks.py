@@ -4,6 +4,10 @@ from chat.celery import app
 from .models import Message
 
 from django.utils import timezone
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+channel_layer = get_channel_layer()
 
 @app.task
 def time_check():
@@ -15,27 +19,17 @@ def time_check():
 
             if now==date_time:
                 
-                send_message(i.user, i.text, i.roomname)
-                # i.delete()
+                send_message(i.user, i.text)
+                i.delete()
 
         except:
             pass
 
-from channels.layers import get_channel_layer
-
-from asgiref.sync import async_to_sync
 
 @app.task
-def send_message(user, message, room_name):
-    channel_layer = get_channel_layer()
-    # layer = get_channel_layer()
-    # layer.group_send(room_name, message)
-
-    async_to_sync(channel_layer.group_send)(room_name, {
+def send_message(user, message):
+    async_to_sync(channel_layer.group_send)('my_chat', {
                 'type': 'chat_message',
                 'message': message,
                 'username': user,
             })
-    print("SEND")
-
-

@@ -1,71 +1,71 @@
+from django.contrib.auth.forms import UserCreationForm
 from django.http.response import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
-# def index(request):
-#     return render(request, 'main/index.html', {})
+from .models import Message
 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
+
+
+def registerPage(request):
+    if request.user.is_authenticated:
+        return redirect('/chat/my_chat/')
+    else:
+        form = UserCreationForm()
+        
+        if request.method == 'POST':
+            form = UserCreationForm(request.POST)
+            if form.is_valid():
+                form.save()
+                
+                return redirect('login')
+        
+        context = {'form':form}
+        return render(request, 'main/register.html', context)
+
+
+def loginPage(request):
+    if request.user.is_authenticated:
+        return redirect('/chat/my_chat/')
+    else:
+        if request.method == "POST":
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            
+            user = authenticate(request, username=username, password=password)
+            
+            if user is not None:
+                login(request, user)
+                return redirect('/chat/my_chat/')
+
+        context = {}
+        return render(request, 'main/login.html', context)
+
+
+def logoutUser(request):
+    logout(request)
+    return redirect('login')
+
+
+@login_required(login_url='login')
 def room(request, room_name):
     return render(request, 'main/room.html', {
         'room_name': room_name
     })
 
 
+@login_required(login_url='login')
 def create_message(request):
     return_dict = dict()
-    print(request.POST)
-    
+
     data = request.POST
     
     message = data.get('message')
     user_username =  data.get('user_username')
     datetime = data.get('datetime')
-    roomname = data.get('roomname')
-    
-    Message.objects.create(text=message, user=user_username, date_time=datetime, roomname=roomname )
+
+    Message.objects.create(text=message, user=user_username, date_time=datetime )
     return JsonResponse(return_dict)
-
-
-
-
-
-
-
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-
-channel_layer = get_channel_layer()
-
-def send_message(user, message, room_name):
-    async_to_sync(channel_layer.group_send)('1', {
-                'type': 'chat_message',
-                'message': message,
-                # 'username': user,
-            })
-    print(user, message, room_name)
-
-
-
-from .models import Message
-from django.utils import timezone
-
-def index(request):
-    all_massages = Message.objects.all()
-    for i in all_massages:
-        now = timezone.now().strftime("%d-%m-%Y %H:%M:%S")
-        date_time = i.date_time.strftime("%d-%m-%Y %H:%M:%S")
-
-        send_message(i.user, i.text, i.roomname)
-        # if date_time==now:
-        #     print('!!!next')
-        #     send_message(i.user, i.text, i.roomname)
-        # i.delete()
-
-    return render(request, 'main/index.html', {})
-
-
-
-
-
-
-
-

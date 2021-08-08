@@ -1,23 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8"/>
-    <title>Chat Room</title>
-</head>
-<body>
-    <div>
-        <textarea  readonly id="chat-log" cols="100" rows="20"></textarea><br/>
-    <input id="chat-message-input" type="text" size="100"/><br/>
-    <input id="chat-message-submit" type="button" value="Send"/>
-    <input id="chat-message-anonymously" type="button" value="Send anonymously"/>
-    </div>
-    <div>
-        <form action="." method ='post' id='csrf_token_get'>{% csrf_token %}</form>
+{% extends 'main/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-md-1 ">
+            <h3 align=" center "">Chat room</h3>
+            <div>
+                <textarea  readonly id="chat-log" cols="100" rows="20"></textarea><br/>
+                <input id="chat-message-input" type="text" size="90"/><br/>
+                <input id="chat-message-submit" type="button" value="Send" class="btn btn-success"/>
 
-        <input id="datetime-message" type="datetime-local" id="date" name="date"/>
-        <input id="chat-message-in_datetime" type="button" value="Send in date time"/>
+                <input id="chat-message-anonymously" type="button" value="Send anonymously" class="btn btn-primary"/>
+            </div>
+            <div>
+                <form action="." method ='post' id='csrf_token_get'>{% csrf_token %}</form>
+                <input id="datetime-message" type="datetime-local" id="date" name="date" />
+                <input id="chat-message-in_datetime" type="button" value="Send in date time" class="btn btn-primary"/>
+                <p><a href="{% url 'logout' %}" class="btn btn-primary">Logout</a> : {{request.user.username}}</p>
+            </div>
+        </div>
     </div>
-    
+</div>
+
 
     {{ request.user.username|json_script:"user_username" }}
     <!-- jQuery -->
@@ -94,7 +97,6 @@
                 data.message = message;
                 data.user_username = user_username;
                 data.datetime = datetime;
-                data.roomname = roomName;
 
                 var csrf_token = $('#csrf_token_get [name="csrfmiddlewaretoken"]').val();
                 data["csrfmiddlewaretoken"] = csrf_token;
@@ -110,5 +112,5 @@
                 messageInputDate.value = '';
             };
     </script>
-</body>
-</html>
+
+{% endblock  %}

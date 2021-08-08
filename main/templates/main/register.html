@@ -1,0 +1,26 @@
+{% extends 'main/base.html' %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 ">
+            <form action="" method="POST">
+                {% csrf_token %}
+            
+                <p>{{ form.username.label }}
+                {{ form.username }} </p>
+                <p>{{ form.password1.label }}
+                {{ form.password1 }}</p>
+                <p>{{ form.password2.label }}
+                {{ form.password2 }}</p>
+            
+                <input type="submit" value="Register user" class="btn btn-primary">
+                <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+    
+            </form>
+
+        </div>
+    </div>
+</div>
+
+{% endblock  %}
