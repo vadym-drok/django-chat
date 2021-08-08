@@ -57,6 +57,7 @@ def room(request, room_name):
     })
 
 
+@login_required(login_url='login')
 def create_message(request):
     return_dict = dict()
 
