@@ -10,6 +10,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 
+# do a task at a given time interval
 app.conf.beat_schedule = {
     'send-messaga': {
         'task': 'main.tasks.time_check',

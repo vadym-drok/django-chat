@@ -1,7 +1,7 @@
 from django.db import models
 
 class Message(models.Model):
-    """Model for create categories of Ads"""
+    """Model for create postponed messages"""
 
     text = models.TextField()
     user = models.CharField(max_length=50)

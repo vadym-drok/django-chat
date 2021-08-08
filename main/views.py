@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 
 
 def registerPage(request):
+    # view for register new users
     if request.user.is_authenticated:
         return redirect('/chat/my_chat/')
     else:
@@ -28,6 +29,7 @@ def registerPage(request):
 
 
 def loginPage(request):
+    # view for user login
     if request.user.is_authenticated:
         return redirect('/chat/my_chat/')
     else:
@@ -46,12 +48,14 @@ def loginPage(request):
 
 
 def logoutUser(request):
+    # view for user logout
     logout(request)
     return redirect('login')
 
 
 @login_required(login_url='login')
 def room(request, room_name):
+    # chat-page view
     return render(request, 'main/room.html', {
         'room_name': room_name
     })
@@ -59,10 +63,11 @@ def room(request, room_name):
 
 @login_required(login_url='login')
 def create_message(request):
+    # creating a delayed message
     return_dict = dict()
 
     data = request.POST
-    
+
     message = data.get('message')
     user_username =  data.get('user_username')
     datetime = data.get('datetime')
