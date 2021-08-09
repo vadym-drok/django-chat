@@ -31,7 +31,7 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env('MY_ALLOWED_HOSTS')
 
 
 # Application definition
@@ -63,8 +63,8 @@ CHANNEL_LAYERS = {
 
 
 # Celery Configuration Options
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_BROKER_URL = env('CELERY_BROKER_URL_OPT')
+CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND_OPT')
 
 
 MIDDLEWARE = [
