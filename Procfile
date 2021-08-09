@@ -1,2 +1,3 @@
 release: python manage.py migrate
-web: gunicorn chat.wsgi
+web: daphne chat.asgi:application --port $PORT --bind 0.0.0.0 -v2
+chatworker: python manage.py runworker --setings=chat.settings -v2
