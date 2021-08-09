@@ -32,7 +32,7 @@
         var roomName = "{{ room_name|escapejs }}";
 
         var chatSocket = new WebSocket(
-            'ws://' + 
+            'wss://' + 
             window.location.host +
             '/ws/chat/' + 
             roomName + 
