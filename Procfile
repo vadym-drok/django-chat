@@ -1,1 +1,2 @@
-web: gunicorn chat.wsgipip
+release: python manage.py migrate
+web: gunicorn chat.wsgi
