@@ -50,8 +50,10 @@ INSTALLED_APPS = [
 ]
 
 
+WSGI_APPLICATION = 'chat.wsgi.application'
+
 # Channels
-ASGI_APPLICATION = "chat.routing.application"
+ASGI_APPLICATION = 'chat.routing.application'
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -95,7 +97,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'chat.wsgi.application'
+
 
 
 # Database

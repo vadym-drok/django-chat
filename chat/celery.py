@@ -14,6 +14,6 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'send-messaga': {
         'task': 'main.tasks.time_check',
-        'schedule': 1.0,
+        'schedule': 59.0,
     },
 }

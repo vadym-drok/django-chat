@@ -1,11 +1,3 @@
-# version: '3'
-
-# services:
-#     redis:
-#         image: "redis:2.8"
-#         ports:
-#             - "6379:6379"
-
 version: "3.2"
 services:
   django:
