@@ -12,11 +12,9 @@ def time_check():
     all_delayed_messages = Message.objects.all()
     for i in all_delayed_messages:
         try:
-            # date_time = i.date_time.strftime("%d-%m-%Y %H:%M:%S")
-            # now = timezone.now().strftime("%d-%m-%Y %H:%M:%S")
             date_time = i.date_time.strftime("%d-%m-%Y %H:%M")
             now = timezone.now().strftime("%d-%m-%Y %H:%M")
-            if now==date_time:
+            if now>=date_time:
                 send_message(i.user, i.text)
                 i.delete()
         except:

@@ -1,3 +1,14 @@
+Chat web application. 
+Login and registration function, chat-room made with django-channels 2 and asgi. 
+The message is sent: nickname, time, text. 
+The possibility of anonymous messages has been implemented.
+The possibility of a delayed message has been implemented (celery).
+Made docker-compose file.
+DataBase: Postgreslq.
+CeleryBroker: Redis
+
+
+Instruction for running in docker:
 
 1) rename file .env_example for .env and fill in variables
 2) run the command in the console: docker-compose run django
